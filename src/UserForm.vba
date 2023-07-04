@@ -36,4 +36,25 @@ Private Sub CommandButton_Click()
   Debug.Print "YMax: " & YMax
   Debug.Print "MaxIterations: " & MaxIterations
   Debug.Print "SheetName: " & SheetName
+
+  ' シートの削除
+  Application.DisplayAlerts = False ' メッセージを非表示
+  Dim ws As Worksheet
+  For Each ws In Worksheets
+    If ws.Name = SheetName Then
+      ws.Delete
+    End If
+  Next ws
+  Application.DisplayAlerts = True  ' メッセージを表示
+
+  ' シートの追加
+  Dim sheet As Worksheet
+  Set sheet = Worksheets.Add
+  sheet.Name = SheetName
+  sheet.Activate
+
+  ' 行と列のサイズを設定
+  sheet.Range(Rows(1), Rows(height)).RowHeight = 7.5
+  sheet.Range(Columns(1), Columns(width)).ColumnWidth = 0.77
+
 End Sub
