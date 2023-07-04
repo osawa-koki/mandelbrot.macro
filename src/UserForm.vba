@@ -54,7 +54,57 @@ Private Sub CommandButton_Click()
   sheet.Activate
 
   ' 行と列のサイズを設定
-  sheet.Range(Rows(1), Rows(height)).RowHeight = 7.5
-  sheet.Range(Columns(1), Columns(width)).ColumnWidth = 0.77
+  sheet.Range(Rows(1), Rows(Height)).RowHeight = 7.5
+  sheet.Range(Columns(1), Columns(Width)).ColumnWidth = 0.77
 
+  ' ピクセル情報を格納する配列の定義。
+  Dim PixelInfoArray() As PixelInfo
+  ReDim PixelInfoArray(Width * Height)
+
+  ' ピクセル情報を格納する配列に初期値をセット。
+  Dim i As Long
+  For i = 1 To Width * Height
+    Set PixelInfoArray(i) = New PixelInfo
+    PixelInfoArray(i).Color = RGB(0, 0, 0)
+    PixelInfoArray(i).x = (i - 1) \ Width
+    PixelInfoArray(i).y = (i - 1) Mod Width
+  Next i
+
+  Dim x As Integer
+  Dim y As Integer
+  For x = 1 To Width
+    For y = 1 To Height
+      Dim cReal As Double
+      Dim cImag As Double
+      cReal = XMin + (XMax - XMin) * (x - 1) / (Width - 1)
+      cImag = YMin + (YMax - YMin) * (y - 1) / (Height - 1)
+      Dim zReal As Double
+      Dim zImag As Double
+      zReal = 0
+      zImag = 0
+      Dim n As Long
+      For n = 1 To MaxIterations
+        Dim zRealTemp As Double
+        Dim zImagTemp As Double
+        zRealTemp = zReal * zReal - zImag * zImag + cReal
+        zImagTemp = 2 * zReal * zImag + cImag
+        zReal = zRealTemp
+        zImag = zImagTemp
+        If zReal * zReal + zImag * zImag > 4 Then
+          Exit For
+        End If
+      Next n
+      Debug.Print n
+      If n = MaxIterations Then
+        PixelInfoArray((y - 1) * Width + x).Color = RGB(0, 0, 0)
+      Else
+        PixelInfoArray((y - 1) * Width + x).Color = RGB(255 * n / MaxIterations, 0, 0)
+      End If
+    Next y
+  Next x
+
+  ' ピクセル情報をシートに出力。
+  For i = 1 To Width * Height
+    sheet.Cells(PixelInfoArray(i).x + 1, PixelInfoArray(i).y + 1).Interior.Color = PixelInfoArray(i).Color
+  Next i
 End Sub

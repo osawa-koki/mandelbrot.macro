@@ -12,8 +12,8 @@ Sub Mandelbrot()
   Dim DefaultSheetName As String
 
   ' デフォルト値の設定。
-  DefaultWidth = 250
-  DefaultHeight = 250
+  DefaultWidth = 50
+  DefaultHeight = 50
   DefaultXMin = -2.0
   DefaultXMax = 1.0
   DefaultYMin = -1.5
